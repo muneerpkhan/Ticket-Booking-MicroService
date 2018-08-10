@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:jd="http://www.springframework.org/schema/jdbc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+      http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+      http://www.springframework.org/schema/context
+      http://www.springframework.org/schema/context/spring-context-3.0.xsd
+   http://www.springframework.org/schema/mvc
+   http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+       http://www.springframework.org/schema/jdbc
+       http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd">
+	<!-- How to include more than one base package -->
+
+	<context:annotation-config />
+	<context:component-scan base-package="com.wis.controller" />
+	<mvc:annotation-driven />
+	<mvc:resources mapping="/public/**" location="/public/" />
+	<mvc:view-controller path="/" view-name="Movies"/>
+	 
+	 <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <!-- <property name="driverClassName" value="com.mysql.jdbc.Driver"/> -->
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://localhost:3306/ticketing"/>
+        <property name="username" value="root"/>
+        <property name="password" value="root"/>
+    </bean>
+    
+    <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	<bean id="ticketingDao" class="com.wis.dao.TicketingDao">
+		<property name="jdbcTemplate" ref="jdbcTemplate" />
+	</bean>
+    
+    <bean id="ticketingService" class="com.wis.service.TicketingService">
+		<property name="ticketingDao" ref="ticketingDao" />
+	</bean>
+	
+	<bean id="ticketingController" class="com.wis.controller.TicketingController">
+		<property name="ticketingService" ref="ticketingService" />
+	</bean>
+	
+    <bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/jsp/"></property>
+		<property name="suffix" value=".jsp"></property>
+	</bean>
+
+</beans>
+
+ 
